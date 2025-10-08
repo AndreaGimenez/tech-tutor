@@ -44,3 +44,10 @@ python3 app.py
 cd brochure
 python3 app.py
 ```
+
+### Execute the dutch teacher app (with Gradio UI):
+
+```bash
+cd dutch-teacher
+python3 app.py
+```
