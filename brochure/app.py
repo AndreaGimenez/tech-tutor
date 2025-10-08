@@ -35,9 +35,10 @@ def get_all_details(url):
     
     return result
 
-system_prompt = "You are an assistant that analyzes the contents of several relevant pages from a company website \
-and creates a short brochure about the company for prospective customers, investors and recruits. Respond in markdown.\
-Include details of company culture, customers and careers/jobs if you have the information."
+def get_brochure_system_prompt(tone):
+    return f"You are an assistant that analyzes the contents of several relevant pages from a company website \
+    and creates a short brochure about the company for prospective customers, investors and recruits. Respond in markdown.\
+    Include details of company culture, customers and careers/jobs if you have the information. Your tone is the one of a {tone}."
 
 def get_brochure_user_prompt(company_name, url):
     user_prompt=f"You are looking at a company called: {company_name}\n"
@@ -45,20 +46,20 @@ def get_brochure_user_prompt(company_name, url):
     user_prompt += get_all_details(url)
     return user_prompt
 
-def stream_brochure(company_name, url, chosen_model):
+def stream_brochure(company_name, url, model, tone):
     messages=[
-        {"role": "system", "content": system_prompt },
+        {"role": "system", "content": get_brochure_system_prompt(tone) },
         {"role": "user", "content": get_brochure_user_prompt(company_name, url)}
     ]
 
-    if (chosen_model == 'GPT'):
+    if (model == 'GPT'):
         stream = openai.chat.completions.create(
             model=MODEL_GPT,
             messages=messages,
             stream=True
         )
 
-    elif(chosen_model == 'Gemini'):
+    elif(model == 'Gemini'):
         gemini_via_openai_client = OpenAI(
         api_key=google_api_key, 
         base_url="https://generativelanguage.googleapis.com/v1beta/openai/")
@@ -69,7 +70,7 @@ def stream_brochure(company_name, url, chosen_model):
             stream=True
         )
     else:
-        raise ValueError(f"Unknown model: {chosen_model}")
+        raise ValueError(f"Unknown model: {model}")
 
     result = ""
     for chunk in stream:
@@ -79,7 +80,10 @@ def stream_brochure(company_name, url, chosen_model):
 
 view = gr.Interface(
     fn=stream_brochure,
-    inputs=[gr.Textbox(label="Company name"),gr.Textbox(label="Company url"), gr.Dropdown(["GPT", "Gemini"], label="Select model", value="GPT")],
+    inputs=[gr.Textbox(label="Company name"),
+            gr.Textbox(label="Company url"), 
+            gr.Dropdown(["GPT", "Gemini"], label="Select model", value="GPT"), 
+            gr.Dropdown(["sales person", "hiring perdon", "comedian person", "5 year old kid"], label="Select tone", value="Oriented to sales")],
     outputs=[gr.Markdown(label="Brochure")],
     flagging_mode="never"
 )
