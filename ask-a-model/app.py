@@ -5,9 +5,11 @@ from dotenv import load_dotenv
 from openai import OpenAI
 from IPython.display import Markdown, display, update_display
 import google.generativeai 
-
 import gradio as gr
-# from utils import validate_api_keys 
+
+import sys
+sys.path.append('..')
+from utils import validate_api_keys 
 
 # constants
 MODEL_GPT = 'gpt-4o-mini'
@@ -18,7 +20,7 @@ load_dotenv(override=True)
 openai_api_key = os.getenv('OPENAI_API_KEY')
 google_api_key = os.getenv('GOOGLE_API_KEY')
 
-# validate_api_keys(openai_api_key, google_api_key)
+validate_api_keys(openai_api_key, google_api_key)
 
 openai=OpenAI()
 
