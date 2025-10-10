@@ -51,3 +51,10 @@ python3 app.py
 cd dutch-teacher
 python3 app.py
 ```
+
+### Execute the holiday pricing app (with Gradio UI)(using simple tools):
+
+```bash
+cd holiday-price
+python3 app.py
+```
